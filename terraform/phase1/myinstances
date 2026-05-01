@@ -1,0 +1,5 @@
+instance_id = "i-07a8be8c15b8cc591"
+instance_public_ip = "18.141.232.133"
+ssm_session_command = "aws ssm start-session --target i-07a8be8c15b8cc591 --region ap-southeast-1"
+vpc_id = "vpc-0201c757ab3ce0794"
+
