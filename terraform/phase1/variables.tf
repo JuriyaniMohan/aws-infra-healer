@@ -7,7 +7,7 @@ variable "aws_region" {
 variable "project_name" {
   description = "Prefix for resource names"
   type        = string
-  default     = "aws-infra-healer"
+  default     = "rj-infra-healer"
 }
 
 variable "vpc_cidr" {
