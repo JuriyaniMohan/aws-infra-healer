@@ -17,3 +17,19 @@ output "vpc_id" {
   description = "VPC ID for reference"
   value       = aws_vpc.main.id
 }
+# ── Session 3 outputs ──
+
+output "lambda_function_name" {
+  description = "Name of the reaction Lambda"
+  value       = aws_lambda_function.reaction.function_name
+}
+
+output "sns_topic_arn" {
+  description = "SNS topic ARN for alarm notifications"
+  value       = aws_sns_topic.alarm_notifications.arn
+}
+
+output "eventbridge_rule_name" {
+  description = "EventBridge rule name"
+  value       = aws_cloudwatch_event_rule.alarm_state_change.name
+}
