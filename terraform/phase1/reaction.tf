@@ -81,7 +81,7 @@ resource "aws_lambda_function" "reaction" {
   source_code_hash = data.archive_file.lambda_zip.output_base64sha256
   handler          = "handler.lambda_handler"
   runtime          = "python3.12"
-  timeout          = 30  # seconds — plenty for logging, tight for production
+  timeout          = 60  # seconds — plenty for logging, tight for production
   memory_size      = 128 # MB — minimum, sufficient for this function
 
   role = aws_iam_role.lambda_role.arn
@@ -171,6 +171,32 @@ resource "aws_sns_topic_policy" "allow_eventbridge" {
         }
         Action   = "sns:Publish"
         Resource = aws_sns_topic.alarm_notifications.arn
+      }
+    ]
+  })
+}
+
+# Permission: Lambda can send SSM Run Commands to our EC2
+# This is the Session 4 addition — scoped to ONLY our instance
+resource "aws_iam_role_policy" "lambda_ssm_policy" {
+  name = "${var.project_name}-lambda-ssm"
+  role = aws_iam_role.lambda_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid    = "AllowSSMSendCommand"
+        Effect = "Allow"
+        Action = [
+          "ssm:SendCommand",
+          "ssm:GetCommandInvocation"
+        ]
+        # Scoped to our specific instance — not all EC2s in the account
+        Resource = [
+          "arn:aws:ec2:${var.aws_region}:*:instance/${aws_instance.lab.id}",
+          "arn:aws:ssm:${var.aws_region}::document/AWS-RunShellScript"
+        ]
       }
     ]
   })
